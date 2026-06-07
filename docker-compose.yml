@@ -1,0 +1,111 @@
+services:
+  guardrails-service:
+    build:
+      context: ./guardrails_service
+    ports:
+      - "8003:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rag-service:
+    build:
+      context: ./rag_service
+    ports:
+      - "8001:8000"
+    environment:
+      CHROMA_DB_PATH: /data/chroma
+      SYNTHETIC_LISTINGS_PATH: /data/synthetic_listings/property_listings.json
+    volumes:
+      - ./data/chroma:/data/chroma
+      - ./data/synthetic_listings:/data/synthetic_listings:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  image-service:
+    build:
+      context: ./image_service
+    ports:
+      - "8002:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  langgraph-agent:
+    build:
+      context: ./langgraph_agent
+    ports:
+      - "8004:8000"
+    environment:
+      RAG_SERVICE_URL: http://rag-service:8000
+      IMAGE_ANALYSER_SERVICE_URL: http://image-service:8000
+      DOWNSTREAM_TIMEOUT_SECONDS: 30
+    depends_on:
+      rag-service:
+        condition: service_healthy
+      image-service:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ai_property_n8n
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      N8N_SECURE_COOKIE: false
+      WEBHOOK_URL: http://127.0.0.1:5678/
+      GENERIC_TIMEZONE: Asia/Jerusalem
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n_flow:/files
+    depends_on:
+      rag-service:
+        condition: service_healthy
+      image-service:
+        condition: service_healthy
+      guardrails-service:
+        condition: service_healthy
+      langgraph-agent:
+        condition: service_healthy
+
+volumes:
+  n8n_data:

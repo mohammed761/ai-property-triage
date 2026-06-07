@@ -1,0 +1,638 @@
+[
+  {
+    "updatedAt": "2026-06-06T14:06:53.665Z",
+    "createdAt": "2026-06-06T10:31:20.430Z",
+    "id": "UAc9nT71Mwlq1DkH",
+    "name": "My workflow",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:8001/check/input",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{\n  {\n    text: $json.body.description\n  }\n}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          -1968,
+          384
+        ],
+        "id": "cb75ec04-5056-43dd-a6e0-8cf9fec369da",
+        "name": "HTTP Request",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "fc36f1d5-dd78-4a83-be0e-da35e775dc39",
+                "leftValue": "={{ $json.pass }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {
+            "ignoreCase": false
+          }
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -1792,
+          592
+        ],
+        "id": "43435156-8bcd-453d-9e0f-4c8a522ce1fc",
+        "name": "If",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "text": "={{ $('Webhook').item.json.body.description }}",
+          "attributes": {
+            "attributes": [
+              {
+                "name": "property_type",
+                "description": "The category of property explicitly mentioned in the text, such as apartment, villa, condominium, townhouse, office space, or warehouse."
+              },
+              {
+                "name": "location",
+                "description": "The most complete location explicitly stated in the text, including city, district, neighborhood, or address if available."
+              },
+              {
+                "name": "price",
+                "description": "The explicitly mentioned property price. Preserve the original formatting exactly as written in the source text."
+              },
+              {
+                "name": "number_of_rooms",
+                "type": "number",
+                "description": "The numeric count of rooms or bedrooms explicitly mentioned in the text. Return only an integer value."
+              },
+              {
+                "name": "key_features",
+                "description": "A comma-separated list of factual property features explicitly mentioned in the text such as swimming pool, balcony, parking, garden, smart home system, rooftop terrace. Do not include marketing or opinion words."
+              },
+              {
+                "name": "certifications",
+                "description": "A comma-separated list of officially named certifications or standards explicitly mentioned in the text such as LEED, ENERGY STAR, BREEAM. If none are mentioned, return an empty string."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+        "typeVersion": 1.2,
+        "position": [
+          -1664,
+          256
+        ],
+        "id": "7f12bbad-a965-4bba-a2e6-7c8b4861971a",
+        "name": "Information Extractor",
+        "executeOnce": false,
+        "alwaysOutputData": false,
+        "notes": "You are a deterministic real-estate information extraction engine.\n\nExtract structured property information from unstructured text.\n\nRULES:\n- Extract ONLY facts explicitly present in the input text.\n- NEVER infer, assume, estimate, or hallucinate information.\n- If information is missing, return null or [].\n- Return valid JSON only.\n- Every field must always exist.\n\nOUTPUT SCHEMA:\n{\n  \"property_type\": string | null,\n  \"location\": string | null,\n  \"price\": string | null,\n  \"number_of_rooms\": integer | null,\n  \"key_features\": string[],\n  \"certifications\": string[]\n}\n\nFIELD RULES:\n\n1. property_type\n- Extract only the explicitly stated property category.\n\n2. location\n- Extract the most complete location explicitly mentioned.\n\n3. price\n- Preserve the original price formatting exactly.\n\n4. number_of_rooms\n- Return only an integer value.\n- Example:\n  \"4-bedroom apartment\" -> 4\n\n5. key_features\n- Include concise factual features only.\n- Exclude marketing language.\n- Remove duplicates.\n\n6. certifications\n- Include only explicitly named certifications.\n- Do not infer certifications.\n\nMISSING VALUES:\n- Missing strings -> null\n- Missing numbers -> null\n- Missing arrays -> []\n\nReturn only valid JSON."
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-2.5-flash",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          -1472,
+          752
+        ],
+        "id": "66de8231-4888-45f4-8ff4-1cab6960c046",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "DwXZTgyT20NyHBUo",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "property-triage",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -2208,
+          400
+        ],
+        "id": "727e953c-537c-44b3-a9ab-c62b78ce6cdd",
+        "name": "Webhook",
+        "webhookId": "4de7d3bd-4730-4841-bb44-1dc74382dd06"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Listing description: A {{ $('Node 4b — Parse extracted JSON').item.json.output.property_type }} located in {{ $('Node 4b — Parse extracted JSON').item.json.output.location }}. Price: {{ $('Node 4b — Parse extracted JSON').item.json.output.price_ils }} ILS. Rooms: {{ $('Node 4b — Parse extracted JSON').item.json.output.num_rooms }}. Key features: {{ $('Node 4b — Parse extracted JSON').item.json.output.key_features.join(', ') }}.\nImage URLs: {{ ( $('Webhook').item.json.body.image_urls|| []) }}",
+          "options": {
+            "systemMessage": "You are a senior property analyst working for a real estate triage platform.\n\nYou enrich property listings ONLY via the LangGraph backend. Do NOT call rag_query or analyse_images directly — LangGraph invokes RAG and the image service internally.\n\nTool:\n  langgraph_agent — Call exactly ONCE per run.\n    • description: the full listing text (same as \"Listing description\" in the user message).\n    • image_urls: a JSON array of image URL strings; use [] if none were provided.\n\nAfter langgraph_agent returns, build your answer from its JSON payload. Prefer the object's `report` field if present; otherwise use the payload as-is. Produce ONLY a JSON object matching the schema below (no markdown, no commentary).\n\n{\n  \"property_type\":      string,\n  \"routing_decision\": \"residential\" or \"commercial\",\n  \"location\":         string,\n  \"price_ils\":        number or null,\n  \"num_rooms\":        number or null,\n  \"key_features\":     [string],\n  \"image_scores\":     [{url, room_type, condition_score, confidence}],\n  \"similar_listings\": [string],\n  \"rag_insight\":      string,\n  \"enrichment_notes\": string,\n  \"confidence\":       number\n}\n\nRouting rules: residential = apartment/house/villa. commercial = office/retail/industrial.\nDo NOT invent data beyond the listing, extracted fields (in the user message), and LangGraph tool output.\n\nCRITICAL COMPLIANCE GUARDRAIL REQUIREMENT:\nWhenever you mention a price, valuation, or currency amount within any text string in this object (such as in 'enrichment_notes' or 'rag_insight'), you must explicitly preface it by stating: \"According to the submitted listing data, the price is...\". This is mandatory to pass structural verification pipelines.",
+            "maxIterations": 5
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          -1200,
+          144
+        ],
+        "id": "cc0ab6a3-b115-439e-b27e-068b7e5e449f",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-3.1-flash-lite",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          -1280,
+          704
+        ],
+        "id": "9b7ddba0-0e60-41dd-abeb-19ea0347a03e",
+        "name": "Google Gemini Chat Model1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "DwXZTgyT20NyHBUo",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:8004/analyse",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ \n  { \n    \"image_urls\": $('Webhook').item.json.body.image_urls \n  } \n}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.4,
+        "position": [
+          -992,
+          736
+        ],
+        "id": "fc7811b6-a5eb-4f8c-86df-3a2e11479d09",
+        "name": "image-analyze"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:8001/query",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{\n  {\n    text: $('Webhook').item.json.body.description\n  }\n}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.4,
+        "position": [
+          -1136,
+          720
+        ],
+        "id": "4e68e157-7365-4538-94a1-e9aa976ac0f6",
+        "name": "rag"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:8003/agent/run",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{\n{\n  \"query\": $('Webhook').item.json.body.description,\n  \"image_urls\": $('Webhook').item.json.body.image_urls\n}\n}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.4,
+        "position": [
+          -1024,
+          464
+        ],
+        "id": "2a8be4ef-85d9-42c5-b7e3-e3eb995b6630",
+        "name": "langgraph"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "You are a professional real-estate listing writer.\n\nYou will receive:\n\n1. Extracted property facts\n2. AI agent analysis\n3. Image analysis results\n4. Retrieved similar-listings context\n\n---\n\nYOUR ROLE\n\nYou must generate a final, publishable property listing report.\n\n---\n\nSTRICT RULES\n\n- Use ONLY the provided inputs.\n- Do NOT invent any missing information.\n- Do NOT assume missing values.\n- If something is missing, write \"Not provided\".\n- Never fabricate:\n  - price\n  - rooms\n  - location\n  - features\n  - certifications\n  - amenities\n\n- Use image analysis ONLY as provided (do not reinterpret raw images).\n- Use retrieved listings ONLY for wording/context, not factual additions.\n- Never copy retrieved listings.\n\n---\n\nIMAGE RULES\n\n- If average condition score > 4.0:\n  → Property is well-maintained.\n\n- If average condition score < 3.0:\n  → Mention refurbishment may be required.\n\n- Otherwise:\n  → Neutral condition description.\n\n---\n\nOUTPUT RULES\n\n- Return ONLY valid JSON\n- Do NOT include explanations\n- Do NOT include markdown\n- Do NOT include schema definitions\n- Do NOT wrap values in \"type\" or \"items\"\n\n---\n\nOUTPUT FORMAT\n\n{\n  \"listing_title\": \"\",\n  \"property_type\": \"\",\n  \"location\": \"\",\n  \"price\": \"\",\n  \"rooms\": \"\",\n  \"condition_summary\": \"\",\n  \"key_features\": [],\n  \"selling_points\": [],\n  \"image_summary\": \"\",\n  \"average_condition_score\": 0,\n  \"marketing_description\": \"\",\n  \"listing_brief_markdown\": \"\"\n}",
+          "hasOutputParser": true,
+          "messages": {
+            "messageValues": [
+              {
+                "type": "HumanMessagePromptTemplate",
+                "message": "=Extracted Fields: {{ $json.output }}"
+              }
+            ]
+          },
+          "batching": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chainLlm",
+        "typeVersion": 1.9,
+        "position": [
+          -912,
+          32
+        ],
+        "id": "e4ebdd09-5500-43d5-aea0-1dda08c88456",
+        "name": "Basic LLM Chain"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          -736,
+          704
+        ],
+        "id": "60d7768c-29e1-4d4d-b0b1-f51fb1d5879c",
+        "name": "Google Gemini Chat Model2",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "DwXZTgyT20NyHBUo",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{\n  \"myField\": \"false\"\n}",
+          "options": {
+            "responseCode": 404
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          -1792,
+          848
+        ],
+        "id": "52798bc7-0c8b-4e48-ada1-74f9a8dfdcf7",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "jsCode": "const item = $input.first().json;\n\n// --------------------\n// 1. Extract raw input safely\n// --------------------\nconst raw =\n  typeof item.text === 'string'\n    ? item.text\n    : typeof item.output === 'string'\n      ? item.output\n      : typeof item.output === 'object'\n        ? JSON.stringify(item.output)\n        : '';\n\n// --------------------\n// 2. Clean markdown / code fences\n// --------------------\nlet stripped = String(raw)\n  .replace(/```(?:json)?/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\n// --------------------\n// 3. Parse JSON safely\n// --------------------\nlet data = null;\n\ntry {\n  data = JSON.parse(stripped);\n} catch (e) {\n  const match = stripped.match(/{[\\s\\S]*}/);\n  if (match) {\n    try {\n      data = JSON.parse(match[0]);\n    } catch (e2) {\n      data = null;\n    }\n  }\n}\n\n// --------------------\n// 4. Helpers\n// --------------------\nfunction norm(v, limit = 5) {\n  if (Array.isArray(v)) {\n    return v.slice(0, limit).map(String);\n  }\n\n  if (typeof v === 'string') {\n    return v\n      .split(',')\n      .map(s => s.trim())\n      .filter(Boolean)\n      .slice(0, limit);\n  }\n\n  if (v == null || v === '') return [];\n\n  return [String(v)];\n}\n\nfunction toInt(v) {\n  const n = parseInt(v, 10);\n  return isNaN(n) ? null : n;\n}\n\n// 💰 FIX: handles \"₪2,450,000\" or \"2,450,000\" or \"$120000\"\nfunction parsePrice(v) {\n  if (!v) return null;\n  const cleaned = String(v).replace(/[^\\d]/g, '');\n  return cleaned ? Number(cleaned) : null;\n}\n\n// --------------------\n// 5. Validate input\n// --------------------\nif (!data || typeof data !== 'object') {\n  return [{\n    json: {\n      output: null,\n      extract_error: true,\n      raw_preview: String(raw).slice(0, 500),\n    }\n  }];\n}\n\n// --------------------\n// 6. Normalize output (FIXED MAPPINGS)\n// --------------------\nconst output = {\n  property_type: data.property_type ?? 'other',\n  location: data.location ?? '',\n\n  // FIX: supports both price formats\n  price_ils: parsePrice(data.price_ils ?? data.price),\n\n  // FIX: supports both field names\n  num_rooms: toInt(data.num_rooms ?? data.number_of_rooms),\n\n  key_features: norm(data.key_features),\n\n  certifications: data.certifications ? String(data.certifications) : '',\n};\n\n// --------------------\n// 7. Return final result\n// --------------------\nreturn [{ json: { output } }];"
+        },
+        "id": "3a0385da-f627-496b-9cce-4e8edbcc31f6",
+        "name": "Node 4b — Parse extracted JSON",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1376,
+          208
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const item = $input.first().json;\n\n// 1. Get raw input safely\nlet raw =\n  typeof item.text === 'string'\n    ? item.text\n    : typeof item.output === 'string'\n      ? item.output\n      : typeof item === 'string'\n        ? item\n        : '';\n\n// 2. Remove markdown code fences (robust)\nlet stripped = String(raw)\n  .replace(/```(?:json)?/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\n// 3. Try direct JSON parse first\nlet data = null;\n\ntry {\n  data = JSON.parse(stripped);\n} catch (e) {\n\n  // 4. Try to extract JSON block from messy output\n  const match = stripped.match(/\\{[\\s\\S]*\\}/);\n\n  if (match) {\n    try {\n      data = JSON.parse(match[0]);\n    } catch (e2) {\n      data = null;\n    }\n  }\n}\n\n// 5. If wrapped inside { report: {...} }, unwrap it\nif (data && typeof data === 'object' && data.report && typeof data.report === 'object') {\n  data = data.report;\n}\n\n// 6. Fallback safe structure\nconst fallback = {\n  property_type: 'unknown',\n  routing_decision: 'residential',\n  location: 'unknown',\n  price_ils: null,\n  num_rooms: null,\n  key_features: [],\n  image_scores: [],\n  similar_listings: [],\n  rag_insight: '',\n  enrichment_notes: 'Could not parse final report JSON from LLM output.',\n  confidence: 0,\n  parse_error: true,\n};\n\n// 7. Final response\nif (!data || typeof data !== 'object') {\n  return [{\n    json: {\n      ...fallback,\n      raw_preview: String(raw).slice(0, 800),\n    }\n  }];\n}\n\nreturn [{\n  json: data\n}];"
+        },
+        "id": "72868d2f-564e-4816-abb0-f4393d1fe4c9",
+        "name": "Node 4b — Parse extracted JSON1",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -592,
+          64
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=http://host.docker.internal:8001/check/output",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "text",
+                "value": "={{ JSON.stringify($json) }}"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 30000
+          }
+        },
+        "id": "e1fa711b-9cff-45df-ad56-fc975371c7da",
+        "name": "Node 7 — Guardrails Output Check",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -400,
+          48
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "fc36f1d5-dd78-4a83-be0e-da35e775dc39",
+                "leftValue": "={{ $json.pass }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {
+            "ignoreCase": false
+          }
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -208,
+          80
+        ],
+        "id": "4f98dd93-bfa7-48bf-973f-9a410722f1dd",
+        "name": "If2",
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ $('Node 4b — Parse extracted JSON1').item.json }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          0,
+          0
+        ],
+        "id": "82b76072-e0de-4cd8-8484-1ec2f26aa332",
+        "name": "Respond to Webhook1"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "={{ $json.reason }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          16,
+          224
+        ],
+        "id": "7fae9432-4ccf-4f57-bafc-ea1c65d0c6bd",
+        "name": "Respond to Webhook2"
+      }
+    ],
+    "connections": {
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Information Extractor": {
+        "main": [
+          [
+            {
+              "node": "Node 4b — Parse extracted JSON",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Basic LLM Chain",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Basic LLM Chain": {
+        "main": [
+          [
+            {
+              "node": "Node 4b — Parse extracted JSON1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "langgraph": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node 4b — Parse extracted JSON": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node 4b — Parse extracted JSON1": {
+        "main": [
+          [
+            {
+              "node": "Node 7 — Guardrails Output Check",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Node 7 — Guardrails Output Check": {
+        "main": [
+          [
+            {
+              "node": "If2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If2": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Respond to Webhook2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate"
+    },
+    "staticData": null,
+    "meta": {
+      "instanceId": "c6f6a438ee0a3908f188729da193f9f56fc148b755f2b6a011d26182df291c6c"
+    },
+    "nodeGroups": [],
+    "pinData": {},
+    "versionId": "d11e511c-a9dd-4722-9b7b-226316a2736c",
+    "activeVersionId": "d11e511c-a9dd-4722-9b7b-226316a2736c",
+    "versionCounter": 119,
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2026-06-06T10:31:20.432Z",
+        "createdAt": "2026-06-06T10:31:20.432Z",
+        "role": "workflow:owner",
+        "workflowId": "UAc9nT71Mwlq1DkH",
+        "projectId": "pzkioIYZARnMAPPH",
+        "project": {
+          "updatedAt": "2026-06-06T10:23:28.289Z",
+          "createdAt": "2026-06-06T10:21:18.695Z",
+          "id": "pzkioIYZARnMAPPH",
+          "name": "Mohammed Sgier <m7mdsgier1@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "creatorId": "9bb0cc71-bb5c-49ea-a23f-a1d517242f6b"
+        }
+      }
+    ],
+    "versionMetadata": {
+      "name": null,
+      "description": null
+    }
+  }
+]

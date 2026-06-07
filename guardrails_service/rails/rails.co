@@ -1,0 +1,17 @@
+define bot reject property listing input
+  "The submitted text was rejected by the property listing input policy."
+
+define bot reject property report output
+  "The generated text was rejected by the property reporting output policy."
+
+define flow validate property listing input
+  $allowed = execute validate_property_input
+  if not $allowed
+    bot reject property listing input
+    stop
+
+define flow validate property report output
+  $allowed = execute validate_property_output
+  if not $allowed
+    bot reject property report output
+    stop

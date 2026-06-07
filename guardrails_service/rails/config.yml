@@ -1,0 +1,11 @@
+colang_version: "1.0"
+
+models: []
+
+rails:
+  input:
+    flows:
+      - validate property listing input
+  output:
+    flows:
+      - validate property report output

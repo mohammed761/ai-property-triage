@@ -1,0 +1,163 @@
+
+/* =========================
+   GLOBAL DARK THEME
+========================= */
+
+.stApp {
+    background: #050505;
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+}
+
+/* =========================
+   ANIMATED BACKGROUND GLOW
+========================= */
+
+.stApp::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+
+    background:
+        radial-gradient(circle at 10% 20%, rgba(37,99,235,0.25), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(99,102,241,0.20), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(29,78,216,0.18), transparent 50%);
+
+    animation: glowMove 12s ease-in-out infinite alternate;
+    z-index: -1;
+    filter: blur(40px);
+    opacity: 0.7;
+}
+
+@keyframes glowMove {
+    0% {
+        transform: translateY(0px) scale(1);
+    }
+    100% {
+        transform: translateY(-20px) scale(1.1);
+    }
+}
+
+/* =========================
+   PAGE FADE IN
+========================= */
+
+.block-container {
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   HEADINGS (NEON STYLE)
+========================= */
+
+h1, h2, h3 {
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(59,130,246,0.4);
+    animation: fadeIn 1s ease;
+}
+
+/* =========================
+   BUTTONS (GLOW EFFECT)
+========================= */
+
+.stButton > button {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+    border-radius: 14px;
+    border: none;
+    padding: 0.5rem 1rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+.stButton > button:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 25px rgba(37,99,235,0.6);
+}
+
+/* =========================
+   INPUTS (DARK GLASS STYLE)
+========================= */
+
+input, textarea {
+    background: rgba(17, 24, 39, 0.9) !important;
+    color: white !important;
+    border: 1px solid #1f2937 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border: 1px solid #3b82f6 !important;
+    box-shadow: 0 0 15px rgba(59,130,246,0.4) !important;
+}
+
+/* =========================
+   SIDEBAR DARK MODE
+========================= */
+
+section[data-testid="stSidebar"] {
+    background: #0a0a0a;
+    border-right: 1px solid #111827;
+}
+
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* =========================
+   PROGRESS BAR ANIMATION
+========================= */
+
+.stProgress > div > div {
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+    animation: progressGlow 2s infinite alternate;
+}
+
+@keyframes progressGlow {
+    from {
+        filter: brightness(1);
+    }
+    to {
+        filter: brightness(1.5);
+    }
+}
+
+/* =========================
+   CARD ANIMATION
+========================= */
+
+div[data-testid="stVerticalBlock"] {
+    animation: fadeIn 0.8s ease;
+}
+
+/* =========================
+   RADIO / SELECT STYLING
+========================= */
+
+.stRadio label {
+    color: white !important;
+}
+
+/* =========================
+   REMOVE WHITE FLASH AREAS
+========================= */
+
+.stApp, .main, .block-container {
+    background-color: #050505 !important;
+}
