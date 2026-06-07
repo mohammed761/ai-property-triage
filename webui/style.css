@@ -1,34 +1,11 @@
-/* =========================
-   BLACK GLASS REAL ESTATE UI
-========================= */
-
-:root {
-    --bg: #000000;
-    --ink: #050505;
-    --panel: rgba(5, 5, 5, 0.75);
-    --panel-solid: #0a0a0a;
-    --panel-hover: #111111;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.12);
-    --primary: #3b82f6;
-    --primary-soft: rgba(59, 130, 246, 0.12);
-    --primary-border: rgba(59, 130, 246, 0.35);
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
-    --gold: #d6a84f;
-    --text: #f9fafb;
-    --text-secondary: #d1d5db;
-    --muted: #9ca3af;
-    --muted-2: #6b7280;
-}
 
 .stApp {
-    background: #000000 !important;
+    background: #000000 !important; /* Pure Black Canvas */
     color: #f3f4f6;
-    font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
 }
 
+/* Deep Fluid Volumetric Ambient Backdrop - Higher Contrast on Black */
 .stApp::before {
     content: "";
     position: fixed;
@@ -37,8 +14,8 @@
     top: -25vh;
     left: -25vw;
     background:
-        linear-gradient(135deg, rgba(59, 130, 246, 0.09), transparent 42%),
-        linear-gradient(315deg, rgba(139, 92, 246, 0.06), transparent 46%);
+        radial-gradient(circle at 10% 15%, rgba(59, 130, 246, 0.15), transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(139, 92, 246, 0.10), transparent 50%);
     z-index: -1;
     filter: blur(120px);
     pointer-events: none;
@@ -49,15 +26,7 @@
     padding: 3rem 2rem !important;
 }
 
-div[data-testid="stToolbar"],
-div[data-testid="stDecoration"] {
-    display: none;
-}
-
-/* =========================
-   TYPE
-========================= */
-
+/* Master Header Center Alignment */
 h1 {
     font-size: 3rem !important;
     font-weight: 800 !important;
@@ -70,726 +39,279 @@ h1 {
     width: 100% !important;
 }
 
-h2,
-h3,
-h4 {
-    color: #ffffff !important;
-    letter-spacing: 0 !important;
-}
-
-p,
-label,
-.stMarkdown,
-.stCaption,
-div[data-testid="stMarkdownContainer"] {
-    color: var(--text-secondary);
-}
-
-small,
-.stCaption,
-div[data-testid="stCaptionContainer"] {
-    color: var(--muted) !important;
-}
-
-.eyebrow,
-.sidebar-kicker,
-.dossier-tag {
-    color: var(--primary);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-.dossier-header-element {
-    padding-bottom: 0.5rem;
-}
-
-.dossier-main-title {
-    color: #ffffff !important;
-    font-size: 2.2rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0 !important;
-    margin: 4px 0 8px !important;
-}
-
-.dossier-geo-marker {
-    color: var(--muted);
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.dossier-body-text {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.7;
-}
-
-/* =========================
-   GLASS PANELS AND CARDS
-========================= */
-
+/* =========================================================
+   NATIVE LAYOUT COMPONENT HOOKS (Glassmorphism Tier)
+   ========================================================= */
 div[data-testid="stMetricWidget"],
-div[data-testid="stVerticalBlockBorderWrapper"],
-.hero-header,
-.report-header,
-.enterprise-hero-card,
-.report-section,
-.fact-card,
-.selling-point-card,
-.sidebar-panel,
-.location-intake-card,
-.hero-side-panel,
-.status-pill,
-details {
-    background: rgba(5, 5, 5, 0.75) !important;
+div[data-testid="stBlock"] > div[style*="border"],
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    background: rgba(5, 5, 5, 0.75) !important; /* Deep Ink Glass */
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important; /* Sleek structural border */
     border-radius: 16px !important;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease !important;
+    padding: 1.5rem !important;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"]:hover,
-.report-section:hover,
-.fact-card:hover,
-.selling-point-card:hover {
+div[data-testid="stBlock"] > div[style*="border"]:hover,
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {
     border-color: rgba(59, 130, 246, 0.35) !important;
     box-shadow: 0 30px 60px -10px rgba(37, 99, 235, 0.15) !important;
     transform: translateY(-2px);
 }
 
-div[data-testid="stVerticalBlockBorderWrapper"] > div {
-    padding: 1.5rem !important;
+/* Algorithmic Display Metrics */
+div[data-testid="stMetricValue"] > div {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: 0;
+    font-family: 'JetBrains Mono', monospace;
+}
+div[data-testid="stMetricLabel"] > div {
+    color: #9ca3af !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.06em;
 }
 
-hr {
-    border-color: rgba(255, 255, 255, 0.08) !important;
+/* =========================================================
+   NAVIGATION ELEMENT DESIGN
+   ========================================================= */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 8px;
+    justify-content: center !important;
 }
 
-/* =========================
-   HEADER
-========================= */
-
-.hero-header {
-    align-items: center;
-    display: flex;
-    gap: 2rem;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    padding: 1.6rem 1.75rem;
+.stTabs [data-baseweb="tab"] {
+    height: 42px;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6b7280 !important;
+    padding: 0 20px !important;
+    transition: all 0.2s ease !important;
 }
 
-.hero-header p,
-.section-heading p,
-.sidebar-copy {
-    color: var(--muted);
-    font-size: 0.96rem;
-    line-height: 1.6;
-    margin: 0;
+.stTabs [data-baseweb="tab"]:hover {
+    color: #e5e7eb !important;
+    background: rgba(255, 255, 255, 0.05) !important;
 }
 
-.hero-badge {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    min-width: 138px;
-    padding: 10px 14px;
+.stTabs [aria-selected="true"] {
+    color: #3b82f6 !important;
+    background: rgba(59, 130, 246, 0.12) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
 }
 
-.hero-badge span {
-    color: var(--success);
-    display: block;
+.stTabs [data-baseweb="tab-highlight"] { display: none !important; }
+
+/* =========================================================
+   DYNAMIC DOSSIER TYPOGRAPHY LAYERS
+   ========================================================= */
+.dossier-header-element {
+    padding-bottom: 0.5rem;
+}
+
+.dossier-tag {
+    color: #3b82f6;
+    text-transform: uppercase;
     font-size: 0.72rem;
     font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
-.hero-badge strong {
-    color: #ffffff;
-    display: block;
+.dossier-main-title {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    letter-spacing: 0 !important;
+    margin: 4px 0 8px 0 !important;
+}
+
+.dossier-geo-marker {
     font-size: 1rem;
-    margin-top: 0.25rem;
+    color: #9ca3af;
+    font-weight: 500;
 }
 
-.section-heading {
-    margin: 1.5rem 0 1.15rem;
+.dossier-body-text {
+    line-height: 1.7;
+    color: #d1d5db;
+    font-size: 1.05rem;
 }
 
-/* =========================
-   SIDEBAR AND STATUS
-========================= */
-
+/* =========================================================
+   SIDEBAR & REAL-TIME CORE MONITOR
+   ========================================================= */
 section[data-testid="stSidebar"] {
-    background-color: #000000 !important;
+    background-color: #000000 !important; /* Total pitch black sidebar */
     border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
-section[data-testid="stSidebar"] > div {
-    padding-top: 1.25rem;
-}
-
-.sidebar-brand {
-    color: #ffffff;
-    font-size: 1.08rem;
-    font-weight: 800;
-    margin-bottom: 0.55rem;
-}
-
-.sidebar-panel {
-    margin: 0.8rem 0 1.25rem;
-    padding: 1rem;
-}
-
 .status-pill {
-    align-items: center;
     display: flex;
-    gap: 12px;
-    margin-bottom: 10px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
     padding: 10px 14px;
+    margin-bottom: 10px;
 }
 
-.status-pill span,
 .status-dot {
-    animation: statusPulse 2s infinite alternate linear;
-    background-color: var(--success);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--success);
-    display: block;
-    height: 6px;
     width: 6px;
-}
-
-.status-pill strong,
-.status-text {
-    color: var(--muted);
-    font-size: 0.8rem;
-    font-weight: 600;
+    height: 6px;
+    background-color: #10b981;
+    border-radius: 50%;
+    margin-right: 12px;
+    box-shadow: 0 0 10px #10b981;
+    animation: statusPulse 2s infinite alternate linear;
 }
 
 @keyframes statusPulse {
-    0% {
-        opacity: 0.4;
-    }
-    100% {
-        opacity: 1;
-    }
+    0% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
-/* =========================
-   INPUTS
-========================= */
+.status-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #9ca3af;
+}
 
+/* =========================================================
+   INPUT CONTROL PANELS & INTERACTIONS
+   ========================================================= */
 div[data-testid="stTextArea"] textarea,
 div[data-testid="stTextInput"] input,
-div[data-testid="stFileUploader"],
-div[data-baseweb="input"] > div,
-div[data-baseweb="textarea"] textarea,
-input,
-textarea {
-    background: #050505 !important;
+div[data-testid="stFileUploader"] {
+    background: #050505 !important; /* Pitch black field areas */
+    color: #f9fafb !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 10px !important;
-    color: #f9fafb !important;
-}
-
-textarea {
-    min-height: 132px;
-}
-
-input::placeholder,
-textarea::placeholder {
-    color: var(--muted-2) !important;
-    opacity: 1 !important;
 }
 
 div[data-testid="stTextArea"] textarea:focus,
-div[data-testid="stTextInput"] input:focus,
-div[data-baseweb="input"]:focus-within > div,
-div[data-baseweb="textarea"]:focus-within textarea,
-input:focus,
-textarea:focus {
+div[data-testid="stTextInput"] input:focus {
     border-color: #3b82f6 !important;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
 }
 
-div[data-testid="stTextArea"] label,
-div[data-testid="stTextInput"] label,
-div[data-testid="stRadio"] label {
-    color: var(--muted) !important;
-    font-weight: 600 !important;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.stButton > button,
-div[data-testid="stButton"] button,
-.stDownloadButton > button,
-div[data-testid="stLinkButton"] a {
+/* Action Buttons Centered */
+.stButton > button {
     background: #0a0a0a !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 10px !important;
     color: #ffffff !important;
-    display: block !important;
-    font-size: 0.9rem !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
     font-weight: 600 !important;
-    min-height: 44px;
+    font-size: 0.9rem !important;
     padding: 0.6rem 1.5rem !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
-    white-space: nowrap;
     width: auto !important;
+    min-width: 280px;
+    margin: 1.5rem auto 0 auto !important;
+    display: block !important;
+    transition: all 0.2s ease !important;
 }
 
-.stButton > button:hover,
-div[data-testid="stButton"] button:hover,
-.stDownloadButton > button:hover,
-div[data-testid="stLinkButton"] a:hover {
+.stButton > button:hover {
     background: #111111 !important;
     border-color: rgba(59, 130, 246, 0.5) !important;
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
     color: #ffffff !important;
 }
 
-/* =========================
-   TABS AND SEGMENTED CONTROLS
-========================= */
-
-.stTabs [data-baseweb="tab-list"] {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    gap: 8px !important;
-    justify-content: center !important;
-    padding-bottom: 8px;
+/* Underwriting Notice Card */
+.condition-box {
+    background: rgba(239, 68, 68, 0.03);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 20px;
 }
 
-.stTabs [data-baseweb="tab"] {
-    background: transparent !important;
-    border: 1px solid transparent !important;
-    border-radius: 8px !important;
-    color: #6b7280 !important;
-    font-size: 0.9rem;
-    font-weight: 600;
-    height: 42px;
-    padding: 0 20px !important;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+.condition-title {
+    color: #f87171;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
 }
 
-.stTabs [data-baseweb="tab"]:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
-    color: #e5e7eb !important;
+.condition-body {
+    font-size: 0.95rem;
+    color: #cbd5e1;
+    line-height: 1.5;
 }
 
-.stTabs [aria-selected="true"] {
-    background: rgba(59, 130, 246, 0.12) !important;
-    border-color: rgba(59, 130, 246, 0.3) !important;
-    color: #3b82f6 !important;
-}
-
-.stTabs [data-baseweb="tab-highlight"] {
-    display: none !important;
-}
-
+/* =========================================================
+   CREATIVE SEGMENTED SELECTION ARCHITECTURE (CENTERED)
+   ========================================================= */
 div[data-testid="stRadio"] > div {
-    background-color: #050505 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background-color: #050505 !important; /* Pitch black selector rail */
+    padding: 5px !important;
     border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     gap: 6px !important;
     justify-content: center !important;
-    margin: 0 auto !important;
     max-width: fit-content !important;
-    padding: 5px !important;
+    margin: 0 auto !important;
 }
 
 .centered-header {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    margin: 25px auto 8px !important;
     text-align: center !important;
-    text-transform: uppercase;
     width: 100% !important;
+    margin: 25px auto 8px auto !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 div[data-testid="stRadio"] label [data-testid="stMarkdownContainer"] p {
-    font-size: 0.88rem !important;
     font-weight: 600 !important;
-    letter-spacing: 0 !important;
+    letter-spacing: 0.3px !important;
+    font-size: 0.88rem !important;
     text-align: center !important;
 }
 
 div[data-testid="stRadio"] label {
     background-color: transparent !important;
     border: 1px solid transparent !important;
-    border-radius: 8px !important;
-    cursor: pointer !important;
     padding: 8px 18px !important;
-    transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease !important;
+    border-radius: 8px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
 }
 
+/* Active Segmented Element State styling rules */
 div[data-testid="stRadio"] label:has(input:checked) {
-    background-color: #111111 !important;
+    background-color: #111111 !important; /* Stark charcoal accent highlight */
     border-color: #3b82f6 !important;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
     color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
 }
 
 div[data-testid="stRadio"] label:hover {
     background-color: #0f0f0f !important;
 }
 
-div[data-testid="stRadio"] input[type="radio"] {
+/* Eradicate traditional radio circular inputs and indicators cleanly */
+div[data-testid="stRadio"] label div[role="radiogroup"] div,
+div[data-testid="stRadio"] label div[data-testid="stWidgetLabel"] + div,
+div[data-testid="stRadio"] input[type="radio"],
+div[data-testid="stRadio"] div[data-checked="true"],
+div[data-testid="stRadio"] div[data-testid="stWidgetLabel"] {
     display: none !important;
-}
-
-/* =========================
-   REPORT PRESENTATION
-========================= */
-
-.report-header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin: 1.6rem 0 1rem;
-    padding: 1.45rem 1.6rem;
-}
-
-.report-header h2 {
-    color: #ffffff !important;
-    font-size: 2.25rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0 !important;
-    line-height: 1.08 !important;
-    margin: 0.2rem 0 0 !important;
-}
-
-.generated-badge,
-.condition-badge {
-    align-items: center;
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.22);
-    border-radius: 999px;
-    color: #d1fae5;
-    display: inline-flex;
-    font-size: 0.78rem;
-    font-weight: 800;
-    gap: 0.48rem;
-    min-height: 36px;
-    padding: 0.4rem 0.75rem;
-}
-
-.generated-badge span {
-    background: var(--success);
-    border-radius: 999px;
-    box-shadow: 0 0 10px var(--success);
-    display: block;
-    height: 6px;
-    width: 6px;
-}
-
-.enterprise-hero-card {
-    display: grid;
-    gap: 1.4rem;
-    grid-template-columns: minmax(0, 1fr) 285px;
-    margin: 1rem 0;
-    padding: 1.75rem;
-}
-
-.listing-hero-topline {
-    align-items: flex-start;
-    display: flex;
-    gap: 1rem;
-    justify-content: space-between;
-    margin-top: 0.55rem;
-}
-
-.listing-hero-topline h2 {
-    color: #ffffff !important;
-    font-size: 2.05rem !important;
-    font-weight: 800 !important;
-    letter-spacing: 0 !important;
-    line-height: 1.13 !important;
-    margin: 0 !important;
-}
-
-.listing-hero-meta,
-.search-result-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    margin-top: 1rem;
-}
-
-.listing-hero-meta span,
-.search-result-meta span {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    color: var(--text-secondary);
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 0.44rem 0.78rem;
-}
-
-.listing-price {
-    color: #ffffff;
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: 0;
-    margin-top: 1.35rem;
-}
-
-.client-note {
-    color: var(--muted);
-    font-size: 0.92rem;
-    line-height: 1.6;
-    margin-top: 0.8rem;
-}
-
-.hero-side-panel {
-    padding: 1.1rem;
-}
-
-.hero-side-panel span,
-.fact-card span {
-    color: var(--muted);
-    display: block;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
-.hero-side-panel strong,
-.fact-card strong {
-    color: #ffffff;
-    display: block;
-    font-size: 1rem;
-    line-height: 1.35;
-    margin-top: 0.65rem;
-}
-
-.hero-side-panel p {
-    color: var(--muted);
-    font-size: 0.88rem;
-    line-height: 1.55;
-    margin: 0.7rem 0 0;
-}
-
-.fact-card {
-    min-height: 88px;
-    padding: 1rem;
-}
-
-.report-section {
-    margin: 1rem 0;
-    padding: 1.35rem;
-}
-
-.section-title-row {
-    align-items: flex-start;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.8rem;
-}
-
-.section-title-row h3,
-.map-section-heading h3 {
-    color: #ffffff !important;
-    font-size: 1.22rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0 !important;
-    line-height: 1.35 !important;
-    margin: 0.25rem 0 0.85rem !important;
-}
-
-.executive-summary {
-    border-color: rgba(59, 130, 246, 0.22) !important;
-}
-
-.executive-summary p {
-    color: var(--text-secondary);
-    font-size: 1.05rem;
-    line-height: 1.7;
-    margin: 0.75rem 0 0;
-}
-
-.feature-chip-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.62rem;
-    margin-top: 0.85rem;
-}
-
-.feature-chip {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.28);
-    border-radius: 999px;
-    color: #dbeafe;
-    font-size: 0.9rem;
-    font-weight: 700;
-    padding: 0.48rem 0.82rem;
-}
-
-.selling-point-grid {
-    display: grid;
-    gap: 0.85rem;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-top: 0.85rem;
-}
-
-.selling-point-card {
-    align-items: flex-start;
-    display: flex;
-    gap: 0.9rem;
-    padding: 1rem;
-}
-
-.selling-point-card strong {
-    color: var(--primary);
-    flex: 0 0 auto;
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.86rem;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    margin-top: 0.08rem;
-}
-
-.selling-point-card p {
-    color: var(--text-secondary);
-    font-size: 0.96rem;
-    line-height: 1.62;
-    margin: 0;
-}
-
-.location-intake-card {
-    align-items: flex-start;
-    display: flex;
-    gap: 1rem;
-    justify-content: space-between;
-    margin: 1rem 0 0.65rem;
-    padding: 1rem;
-}
-
-.location-intake-card p {
-    color: var(--muted);
-    font-size: 0.92rem;
-    line-height: 1.5;
-    margin: 0.3rem 0 0;
-}
-
-.location-intake-card strong,
-.map-location-label {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    color: var(--text-secondary);
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 700;
-    line-height: 1.45;
-    padding: 0.72rem 0.85rem;
-}
-
-.map-location-label {
-    color: #ffffff;
-    margin: 0.5rem 0 0.85rem;
-}
-
-.condition-box {
-    background: rgba(239, 68, 68, 0.03);
-    border: 1px solid rgba(239, 68, 68, 0.15);
-    border-radius: 10px;
-    margin-top: 20px;
-    padding: 16px;
-}
-
-.condition-title {
-    color: #f87171;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-}
-
-.condition-body {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-/* =========================
-   STREAMLIT OUTPUT DETAILS
-========================= */
-
-div[data-testid="stAlert"] {
-    background: rgba(5, 5, 5, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    color: var(--text);
-}
-
-.stProgress > div > div > div {
-    background: linear-gradient(90deg, #3b82f6, #93c5fd) !important;
-}
-
-details summary {
-    color: var(--text-secondary);
-    font-weight: 700;
-}
-
-pre,
-code {
-    background: #050505 !important;
-    border-radius: 10px !important;
-    color: var(--text-secondary) !important;
-}
-
-div[data-testid="stImage"] img {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-}
-
-div[data-testid="stDeckGlJsonChart"] {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.search-image-placeholder,
-.recommendation-image-placeholder {
-    align-items: center;
-    background: rgba(5, 5, 5, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    color: var(--muted);
-    display: flex;
-    font-size: 0.95rem;
-    font-weight: 700;
-    justify-content: center;
-    min-height: 150px;
-    text-align: center;
-}
-
-div[data-testid="stMetricValue"] > div {
-    color: #ffffff !important;
-    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 1.75rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0;
-}
-
-div[data-testid="stMetricLabel"] > div {
-    color: #9ca3af !important;
-    font-size: 0.7rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -797,43 +319,5 @@ div[data-testid="stMetricLabel"] > div {
         animation: none !important;
         transition: none !important;
         scroll-behavior: auto !important;
-    }
-}
-
-@media (max-width: 760px) {
-    .block-container {
-        padding: 1.25rem 1rem 2.5rem !important;
-    }
-
-    h1 {
-        font-size: 2.2rem !important;
-    }
-
-    .hero-header,
-    .report-header,
-    .listing-hero-topline,
-    .location-intake-card {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .enterprise-hero-card {
-        grid-template-columns: 1fr;
-    }
-
-    .selling-point-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .stTabs [data-baseweb="tab-list"] {
-        justify-content: flex-start !important;
-        overflow-x: auto;
-    }
-
-    .stButton > button,
-    div[data-testid="stButton"] button,
-    .stDownloadButton > button,
-    div[data-testid="stLinkButton"] a {
-        width: 100% !important;
     }
 }
